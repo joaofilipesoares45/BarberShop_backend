@@ -10,7 +10,7 @@
     "start": "node app.js",
     "dev": "node app.js",
     "db": "node connection/database.js",
-    "migrate": "npx sequelize-cli db:migrate"
+    "vercel-build": "npx sequelize-cli db:migrate"
   },
   "author": "",
   "license": "ISC",
