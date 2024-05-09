@@ -1,7 +1,6 @@
 {
   "name": "back-end",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "engines": {
     "node": "20.x"
@@ -20,11 +19,19 @@
     "express": "^4.19.2",
     "fs": "^0.0.1-security",
     "mysql2": "^3.9.7",
-    "npx": "^10.2.2",
     "require": "^2.4.20",
     "sequelize": "^6.37.3"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaofilipesoares45/BarberShop_backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joaofilipesoares45/BarberShop_backend/issues"
+  },
+  "homepage": "https://github.com/joaofilipesoares45/BarberShop_backend#readme",
+  "description": ""
 }
