@@ -3,7 +3,6 @@ const cors = require('cors');
 
 require('dotenv/config');
 const ENV = process.env
-
 const app = express()
 app.use(express.json())
 app.use(cors());
