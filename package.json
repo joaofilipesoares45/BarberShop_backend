@@ -27,11 +27,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joaofilipesoares45/BarberShop_backend.git"
+    "url": "git+https://github.com/joaofilipesoares45/barberShop_backend.git"
   },
   "bugs": {
-    "url": "https://github.com/joaofilipesoares45/BarberShop_backend/issues"
+    "url": "https://github.com/joaofilipesoares45/barberShop_backend/issues"
   },
-  "homepage": "https://github.com/joaofilipesoares45/BarberShop_backend#readme",
+  "homepage": "https://github.com/joaofilipesoares45/barberShop_backend#readme",
   "description": ""
 }
