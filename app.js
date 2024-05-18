@@ -11,38 +11,63 @@ const port = ENV.PORT
 
 const database = require('./connection/database')
 
-app.get('/usuarios', (req, res) => {
+app.get('/database', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET");
+
+    database.dataQuery().then(ret => {
+        res.send({ clientes: ret[0][0], agenda: ret[1][0], itens: ret[2][0], servicos: ret[3][0] })
+    })
+})
+
+app.get('/users', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET");
+
     database.selectTable('usuarios')
         .then(data => res.send(data[0]))
 })
 
 app.post('/new-user', (req, res) => {
-    let user = {
-        "nome": "Usuario 1",
-        "email": "usuario1@gmail.com",
-        "cpf": "001.001.001-01",
-        "tipo": "empresa"
-    }
-    if (req.body.user !== undefined) {
-        user = {
-            nome: req.body.user.nome,
-            email: req.body.user.email,
-            cpf: req.body.user.cpf,
-            tipo: req.body.user.tipo
-        }
-    }
-    database.addInTable('usuarios', user)
-        .then(ret => res.send(ret))
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET");
+
+    database.addInTable('usuarios', req.body)
+        .then(ret => {
+            if (req.body.tipo === 'empresa') {
+                req.body.id = ret[0][0]['LAST_INSERT_ID()']
+                database.addInTable('empresa', req.body)
+            }
+            res.send('OK')
+        })
 })
 
 app.delete('/remove-user', (req, res) => {
-    let id = 1
-    if (req.body.user_id !== undefined) {
-        id = req.body.user_id
-    }
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET");
 
-    database.removeOfTable('usuarios', id)
+    if (req.body.id !== undefined) {
+        database.removeOfTable('usuarios', req.body.id)
+            .then(ret => res.send(ret))
+    }
+})
+
+app.post('/new-service', (req, res) => {
+    database.addInTable('servicos', req.body)
         .then(ret => res.send(ret))
+})
+
+app.delete('/remove-service', (req, res) => {
+    if (req.body.id !== undefined) {
+        database.removeOfTable('servicos', req.body.id)
+            .then(ret => res.send(ret))
+    }
+})
+
+app.get('/table', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET");
+    
 })
 
 app.listen(port, (req, res) => {

@@ -14,7 +14,6 @@ async function connectDB() {
 
 const selectTable = async (tabela) => {
     const conn = await connectDB()
-    // return await conn.query('DROP TABLE SequelizeMeta;')
     return await conn.query(`SELECT * FROM ${tabela}`)
 }
 
@@ -23,8 +22,8 @@ const sqlTable = (tabela, data) => {
     let values 
     switch (tabela) {
         case 'usuarios':
-            sql = "INSERT INTO usuarios(nome, email, cpf, tipo) VALUES (?,?,?,?);"
-            values = [data.nome, data.email, data.cpf, data.tipo]
+            sql = "INSERT INTO usuarios(nome, email, cpf, tipo, dataCadastro) VALUES (?,?,?,?,?);"
+            values = [data.nome, data.email, data.cpf, data.tipo, data.dataCadastro]
             break;
     
         case 'empresa':
@@ -57,10 +56,10 @@ const sqlTable = (tabela, data) => {
 }
 
 const addInTable = async (tabela, data) => {
-    const sql = sqlTable(tabela,data)
+    const sql = sqlTable(tabela, data)
     const conn = await connectDB()
     await conn.query(sql[0], sql[1]);
-    return 'OK'
+    return await conn.query(`SELECT LAST_INSERT_ID()`)
 }
 
 const removeOfTable = async (tabela, id) => {
@@ -69,4 +68,12 @@ const removeOfTable = async (tabela, id) => {
     return await conn.query(`DELETE FROM ${tabela} WHERE id = ${id}`)
 }
 
-module.exports = { connectDB, selectTable, addInTable, removeOfTable};
+const dataQuery = async (tabela, filter) => {
+    const conn = await connectDB()
+    const idEmpresa = 10
+    return [await conn.query(`SELECT * FROM clientes`), await conn.query(`SELECT * FROM agenda`), await conn.query(`SELECT * FROM itens`), await conn.query(`SELECT * FROM servicos`)]
+}
+
+
+
+module.exports = { connectDB, selectTable, addInTable, removeOfTable, dataQuery};
