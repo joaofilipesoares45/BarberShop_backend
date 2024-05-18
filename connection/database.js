@@ -14,7 +14,7 @@ async function connectDB() {
 
 const selectTable = async (tabela) => {
     const conn = await connectDB()
-    return await conn.query(`SELECT * FROM ${tabela}`)
+    return await conn.query(`SELECT * FROM ${tabela}`).then(res => {return res[0]})
 }
 
 const sqlTable = (tabela, data) => {
@@ -22,8 +22,8 @@ const sqlTable = (tabela, data) => {
     let values 
     switch (tabela) {
         case 'usuarios':
-            sql = "INSERT INTO usuarios(nome, email, cpf, tipo, dataCadastro) VALUES (?,?,?,?,?);"
-            values = [data.nome, data.email, data.cpf, data.tipo, data.dataCadastro]
+            sql = "INSERT INTO usuarios(nome, email, cpf, tipo) VALUES (?,?,?,?);"
+            values = [data.nome, data.email, data.cpf, data.tipo]
             break;
     
         case 'empresa':
@@ -64,16 +64,25 @@ const addInTable = async (tabela, data) => {
 
 const removeOfTable = async (tabela, id) => {
     const conn = await connectDB()
-    // return await conn.query('DROP TABLE SequelizeMeta;')
     return await conn.query(`DELETE FROM ${tabela} WHERE id = ${id}`)
 }
 
 const dataQuery = async (tabela, filter) => {
     const conn = await connectDB()
-    const idEmpresa = 10
-    return [await conn.query(`SELECT * FROM clientes`), await conn.query(`SELECT * FROM agenda`), await conn.query(`SELECT * FROM itens`), await conn.query(`SELECT * FROM servicos`)]
+    return { 
+        clientes: await conn.query(`SELECT * FROM clientes`).then(res => {return res[0]}), 
+        agenda: await conn.query(`SELECT * FROM agenda`).then(res => {return res[0]}), 
+        itens: await conn.query(`SELECT * FROM itens`).then(res => {return res[0]}), 
+        servicos: await conn.query(`SELECT * FROM servicos`).then(res => {return res[0]})
+    }
 }
 
-
+// const uuu = async () => {
+//     const conn = await connectDB()
+//     await conn.query('DROP TABLE SequelizeMeta')
+//     await conn.query('DROP TABLE usuarios')
+//     await conn.query('DROP TABLE clientes')
+// }
+// uuu()
 
 module.exports = { connectDB, selectTable, addInTable, removeOfTable, dataQuery};

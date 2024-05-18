@@ -1,5 +1,7 @@
 'use strict';
 
+const { DataTypes } = require('sequelize');
+
 // Clientes
 
 /** @type {import('sequelize-cli').Migration} */
@@ -19,7 +21,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      DataNascimento: {
+      dataNascimento: {
         allowNull: true,
         type: Sequelize.STRING,
       },
@@ -35,8 +37,8 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING,
       },
-      dataCadastro: {
-        type: Sequelize.DATE
+      created_at: {
+        type: Sequelize.DATE,
       },
     })
 

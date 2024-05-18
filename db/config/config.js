@@ -13,6 +13,10 @@ module.exports = {
         rejectUnauthorized: true,
       },
     },
+    "define":{
+      timestamps: true,
+      underscored: true
+    }
   },
   "test": {
     "username": process.env.DATABASE_USERNAME,
@@ -25,6 +29,10 @@ module.exports = {
         rejectUnauthorized: true,
       },
     },
+    "define":{
+      timestamps: true,
+      underscored: true
+    }
   },
   "production": {
     "username": process.env.DATABASE_USERNAME,
@@ -37,5 +45,9 @@ module.exports = {
         rejectUnauthorized: true,
       },
     },
+    "define":{
+      timestamps: true,
+      underscored: true
+    }
   }
 }
