@@ -7,4 +7,13 @@ module.exports = {
 
         res.send(await database.selectTable('empresa'))
     },
+    async store(req, res) {
+
+    },
+    async update(req, res) {
+
+    },
+    async delete(req, res) {
+
+    }
 }
