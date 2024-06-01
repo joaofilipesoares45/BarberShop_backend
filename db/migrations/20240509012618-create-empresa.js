@@ -14,6 +14,9 @@ module.exports = {
       },
       nome: {
         type: Sequelize.STRING
+      },
+      senha: {
+        type: Sequelize.STRING
       }
     })
   },

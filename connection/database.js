@@ -14,26 +14,28 @@ async function connectDB() {
 
 const selectTable = async (tabela) => {
     const conn = await connectDB()
-    return await conn.query(`SELECT * FROM ${tabela}`).then(res => {return res[0]})
+    try {
+        return await conn.query(`SELECT * FROM ${tabela}`).then(res => { return res[0] })
+    } catch (error) {}
 }
 
 const sqlTable = (tabela, data) => {
     let sql
-    let values 
+    let values
     switch (tabela) {
         case 'usuarios':
-            sql = "INSERT INTO usuarios(nome, email, cpf, tipo) VALUES (?,?,?,?);"
-            values = [data.nome, data.email, data.cpf, data.tipo]
+            sql = "INSERT INTO usuarios(nome, email, cpf, tipo, created_at) VALUES (?,?,?,?,?);"
+            values = [data.nome, data.email, data.cpf, data.tipo, data.dataCadastro]
             break;
-    
+
         case 'empresa':
-            sql = "INSERT INTO empresa(nome) VALUES (?);"
-            values = [data.nome]
+            sql = "INSERT INTO empresa(id, nome, senha) VALUES (?,?,?);"
+            values = [data.id, data.nome, data.senha]
             break;
 
         case 'clientes':
-            sql = "INSERT INTO clientes(idEmpresa, nome, DataNascimento, email, Telefone1, Telefone2) VALUES (?,?,?,?,?,?);"
-            values = [data.idEmpresa, data.nome, data.dataNascimento, data.email, data.telefone1, data.telefone2]
+            sql = "INSERT INTO clientes(id, idEmpresa, nome, DataNascimento, email, Telefone1, Telefone2) VALUES (?,?,?,?,?,?,?);"
+            values = [data.id, data.idEmpresa, data.nome, data.dataNascimento, data.email, data.telefone1, data.telefone2]
             break;
 
         case 'agenda':
@@ -52,7 +54,7 @@ const sqlTable = (tabela, data) => {
             break
     }
 
-    return [sql,values]
+    return [sql, values]
 }
 
 const addInTable = async (tabela, data) => {
@@ -62,27 +64,60 @@ const addInTable = async (tabela, data) => {
     return await conn.query(`SELECT LAST_INSERT_ID()`)
 }
 
+const updateInTable = async (tabela, data) => {
+    const id = data.id
+    const conn = await connectDB()
+    Object.keys(data).forEach(async (key) => {
+        if (key !== id) {
+            await conn.query(`UPDATE ${tabela} SET ${key} = "${data[key]}" WHERE id = ${id}`)
+        }
+    })
+}
+
 const removeOfTable = async (tabela, id) => {
     const conn = await connectDB()
     return await conn.query(`DELETE FROM ${tabela} WHERE id = ${id}`)
 }
 
-const dataQuery = async (tabela, filter) => {
+const dataQuery = async (filter) => {
     const conn = await connectDB()
-    return { 
-        clientes: await conn.query(`SELECT * FROM clientes`).then(res => {return res[0]}), 
-        agenda: await conn.query(`SELECT * FROM agenda`).then(res => {return res[0]}), 
-        itens: await conn.query(`SELECT * FROM itens`).then(res => {return res[0]}), 
-        servicos: await conn.query(`SELECT * FROM servicos`).then(res => {return res[0]})
-    }
+    try {
+        if (filter === undefined) {
+            return {
+                clientes: await conn.query(`SELECT * FROM clientes`).then(res => { return res[0] }),
+                agenda: await conn.query(`SELECT * FROM agenda`).then(res => { return res[0] }),
+                itens: await conn.query(`SELECT * FROM itens`).then(res => { return res[0] }),
+                servicos: await conn.query(`SELECT * FROM servicos`).then(res => { return res[0] })
+            }
+        } else {
+            return {
+                clientes: await conn.query(`SELECT * FROM clientes WHERE idEmpresa = ${filter}`).then(res => { return res[0] }),
+                agenda: await conn.query(`SELECT * FROM agenda WHERE idEmpresa = ${filter}`).then(res => { return res[0] }),
+                itens: await conn.query(`SELECT * FROM itens WHERE idEmpresa = ${filter}`).then(res => { return res[0] }),
+                servicos: await conn.query(`SELECT * FROM servicos WHERE idEmpresa = ${filter}`).then(res => { return res[0] })
+            }
+        }
+    } catch (error) { }
+
 }
 
-// const uuu = async () => {
-//     const conn = await connectDB()
-//     await conn.query('DROP TABLE SequelizeMeta')
-//     await conn.query('DROP TABLE usuarios')
-//     await conn.query('DROP TABLE clientes')
-// }
+const selectWhere = async (tabela, filter) => {
+    const conn = await connectDB()
+    return await conn.query(`SELECT * FROM ${tabela} WHERE id = ${filter}`).then(res => { return res[0] })
+}
+
+const uuu = async () => {
+    const conn = await connectDB()
+
+    const tables = ['SequelizeMeta', 'usuarios', 'clientes', 'servicos', 'empresa', 'itens', 'agenda']
+
+    tables.forEach(async (table) => {
+        try {
+            await conn.query(`DROP TABLE ${table}`)
+        } catch (error) { }
+
+    })
+}
 // uuu()
 
-module.exports = { connectDB, selectTable, addInTable, removeOfTable, dataQuery};
+module.exports = { connectDB, selectTable, addInTable, updateInTable, removeOfTable, dataQuery, selectWhere };

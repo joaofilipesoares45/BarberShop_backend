@@ -12,18 +12,26 @@ module.exports = {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET");
 
-
         await database.addInTable('usuarios', req.body)
             .then(ret => {
+                req.body.id = ret[0][0]['LAST_INSERT_ID()']
                 if (req.body.tipo === 'empresa') {
-                    req.body.id = ret[0][0]['LAST_INSERT_ID()']
                     database.addInTable('empresa', req.body)
                 } else {
-                    req.body.idEmpresa = ret[0][0]['LAST_INSERT_ID()']
                     database.addInTable('clientes', req.body)
                 }
+                res.send({message: ret[0][0]['LAST_INSERT_ID()']})
             })
-        res.send({'mensage': 'OK'})
+    },
+    
+    async update(req, res) {
+        const user = req.body
+        await database.updateInTable('usuarios', user)
+        if (user.tipo === 'cliente') {
+            await database.updateInTable('clientes', user)
+        }else{
+            await database.updateInTable('empresa', user)
+        }
     },
 
     async delete(req, res) {
@@ -31,8 +39,16 @@ module.exports = {
         res.header("Access-Control-Allow-Methods", "POST,DELETE,PUT,GET");
 
         if (req.body.id !== undefined) {
-            await database.removeOfTable('usuarios', req.body.id)
+            const user = await database.selectWhere('usuarios', req.body.id).then(user => {return user[0]})
+            
+            if (user.tipo === 'empresa') {
+                await database.removeOfTable('empresa', user.id)
+            }else{
+                await database.removeOfTable('clientes', user.id)
+            }
+            await database.removeOfTable('usuarios', user.id)
             res.send({'mensage': 'OK'})
         }
     }
 }
+
